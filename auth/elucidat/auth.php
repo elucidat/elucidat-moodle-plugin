@@ -37,17 +37,18 @@ class auth_plugin_elucidat extends auth_plugin_base {
         $this->config = get_config('auth/elucidat');
     }
 
-    function user_authenticated_hook($user, $username, $password){
+    function user_authenticated_hook($user, $username, $password)
+    {
         global $DB, $SESSION, $CFG;
 
         //TODO store this stuff in the config
         $api_url = "http://api.elucidat.dev";
         $author_url = "http://author.elucidat.dev";
-        $my_redirect = "http://www.elucidat.dev";
+        $my_redirect = "http://lms.elucidat.dev";
 
         //TODO remove all keys before commit
-        $consumer_key = "xxxx-xxxx-xxxx-xxxx";
-        $consumer_secret = "xxxx-xxxx-xxxx-xxxx";
+        $consumer_key = “xxxx-xxxx-xxxx-xxxx-xxxxxxxx”;
+        $consumer_secret = "xxxx-xxxx-xxxx-xxxx-xxxxxxxx";
         $email = $user->email;
 
         /*
@@ -55,10 +56,23 @@ class auth_plugin_elucidat extends auth_plugin_base {
          * in this example we will use user roles to differentiate, and in this case well be using the user role 'coursecreator'
          * We assume that at this point, that authors will have already have an account at elucidat.
          */
-        $course_creator_role = $DB->get_record('role', array('archetype'=>'coursecreator'));
-        if($DB->count_records('role_assignments', array('roleid' => $course_creator_role->id, 'userid' => $user->id)) > 0 ) {
+        //$course_creator_role = $DB->get_record('role', array('archetype'=>'coursecreator'));
+        //if($DB->count_records('role_assignments', array('roleid' => $course_creator_role->id, 'userid' => $user->id)) > 0 ) {
+
+            /*
+             * Lets set this user as an author
+             * this should really be done via the events API (role_assigned, role_unassigned), but for the purpose of example...
+             */
+
             $this->single_sign_on($api_url, $consumer_key, $consumer_secret, $email, $author_url, $my_redirect);
-        }
+        //} else {
+            /*
+            * Lets delete this author from elucidat
+            * this should really be done via the events API (role_assigned, role_unassigned), but for the purpose of example...
+            */
+            //TODO
+
+        //}
 
     }
 
